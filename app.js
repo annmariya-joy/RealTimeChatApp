@@ -40,19 +40,22 @@ app.use('/api/messages', require('./routes/messageRoutes')(io));
 
 app.use('/api/groups', require('./routes/groupRoutes'));
 
+
 const port = 9000;
 const localIpAddress = getLocalIpAddress();
 
-sequelize
-  .sync()
-  .then(() => {
-    app.listen(port, localIpAddress, () => {
-      console.log(`Server running at http://${localIpAddress}:${port}`);
+if (process.env.NODE_ENV !== 'test') {
+  sequelize
+    .sync()
+    .then(() => {
+      app.listen(port, localIpAddress, () => {
+        console.log(`Server running at http://${localIpAddress}:${port}`);
+      });
+    })
+    .catch((err) => {
+      console.error('Unable to connect to the database:', err);
     });
-  })
-  .catch((err) => {
-    console.error('Unable to connect to the database:', err);
-  });
+}
 
 function getLocalIpAddress() {
   const interfaces = require('os').networkInterfaces();
@@ -66,3 +69,5 @@ function getLocalIpAddress() {
   }
   return 'localhost'; 
 }
+
+module.exports = app; 

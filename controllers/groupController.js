@@ -2,23 +2,33 @@ const db = require("../models");
 
 
 // Create a new group
+// Create a new group
 const createGroup = async (req, res) => {
     const { group_name, members } = req.body;  
 
+    // Validate input
+    if (!group_name || !Array.isArray(members) || members.length === 0) {
+        return res.status(400).json({ message: 'Invalid input. Group name and members are required.' });
+    }
+
     try {
+        // Create the group
         const group = await db.groups.create({
             group_name,
             created_by: req.user.userId,
-            updated_by : req.user.userId
+            updated_by: req.user.userId
         });
 
-  
+        // Prepare members data
         const groupMembers = members.map(memberId => ({
             user_id: memberId,
             group_id: group.group_id
         }));
+
+        // Add members to the group
         await db.group_members.bulkCreate(groupMembers);
 
+        // Respond with success
         res.status(201).json({ message: 'Group created successfully.', group });
     } catch (error) {
         res.status(500).json({ message: 'Failed to create group.', error });

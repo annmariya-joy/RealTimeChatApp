@@ -9,7 +9,10 @@ const sequelize = new Sequelize(
     process.env.DB_PASSWORD,
     {
         host: process.env.DB_HOST,
-        dialect: process.env.DB_DIALECT,
+        dialect: process.env.DB_DIALECT || 'mysql',
+        dialectOptions: {
+            charset: 'utf8mb4' // Make sure this matches your database's charset
+          },
         pool: {
             max: dbConfig.pool.max,
             min: dbConfig.pool.min,
@@ -17,7 +20,7 @@ const sequelize = new Sequelize(
             idle: dbConfig.pool.idle
 
         },
-        logging: false//process.env.NODE_ENV == "dev"
+       logging: false//process.env.NODE_ENV == "dev"
     }
 )
 
