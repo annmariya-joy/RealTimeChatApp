@@ -10,18 +10,30 @@ const constant = require("../config/utils/constant");
 
 
 
-
 const login = async (req, res) => {
   const authHeader = req.headers.authorization;
-
-  if (!authHeader) {
-    return res.status(401).json({ message: 'Authorization header is missing.' });
+ 
+  if (!authHeader || !authHeader.startsWith('Basic ')) {
+    return res.status(401).json({ message: 'Authorization header is missing.'});
   }
 
   try {
-    const decodedCredentials = Buffer.from(authHeader.split(' ')[1], 'base64').toString('utf-8');
-    const [userEmail, password] = decodedCredentials.split(':');
+    const encodedCredentials = authHeader.split(' ')[1];
+    if (!encodedCredentials) {
+      throw new Error('Encoded credentials are missing.');
+    }
 
+ 
+    const decodedCredentials = Buffer.from(encodedCredentials, 'base64').toString('utf-8');
+   
+
+    const [userEmail, password] = decodedCredentials.split(':');
+    if (!userEmail || !password) {
+      throw new Error('Invalid credentials format.');
+    }
+
+
+    // Validate email and password
     if (!validateEmail(userEmail)) {
       return res.status(400).json({ message: 'Invalid email format.' });
     }
@@ -43,11 +55,10 @@ const login = async (req, res) => {
     const accessToken = await generateAccessToken(user);
     res.status(200).json({ message: 'Login successful.', accessToken });
   } catch (error) {
-    console.error(error);
+  
     res.status(500).json({ message: 'Error logging in.', error });
   }
 };
-
 
 
 const signup = async (req, res) => {
