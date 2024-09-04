@@ -1,37 +1,56 @@
-// const db = require("../models");
-
-
-
+const db = require("../models");
 
 // Send a message to another user
 const sendMessage = (io) => async (req, res) => {
     const { receiver_id, message_body } = req.body;
 
     try {
-  
+        // Check if the receiver exists
         const receiver = await db.users.findByPk(receiver_id);
         if (!receiver) {
             return res.status(404).json({ message: 'Receiver not found.' });
         }
 
-        
+        // Create the message
         const message = await db.messages.create({
             message_body,
-            sender_id:  req.user.userId,  
+            sender_id: req.user.userId,
             receiver_id
         });
 
-       // Emit the message to the receiver's socket room
-       io.to(receiver_id).emit('newMessage', message);
+        // Emit the message to the receiver's socket room
+        io.to(receiver_id).emit('newMessage', message);
 
-       // Optionally emit to the sender as well
-       io.to(req.user.userId).emit('newMessage', message);
+        // Optionally emit to the sender as well
+        io.to(req.user.userId).emit('newMessage', message);
 
         res.status(201).json({ message: 'Message sent successfully.', data: message });
     } catch (error) {
         res.status(500).json({ message: 'Failed to send message.', error });
     }
 };
+
+// Get all messages between the authenticated user and another user
+const getMessages = async (req, res) => {
+    const { user_id } = req.params;  // The other user's ID
+
+    try {
+        // Fetch messages where the authenticated user is either the sender or the receiver
+        const messages = await db.messages.findAll({
+            where: {
+                sender_id: req.user.userId,
+                receiver_id: user_id
+            },
+            order: [['created_at', 'ASC']]  // Order messages by creation date
+        });
+
+        res.status(200).json({ data: messages });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to retrieve messages.', error });
+    }
+};
+
+
 
 
 
@@ -103,27 +122,7 @@ const getGroupMessages = async (req, res) => {
 
 
 
-// Get all messages between the authenticated user and another user
-const getMessages = async (req, res) => {
-    const { user_id } = req.params;  
 
-    try {
-        
-        const messages = await db.messages.findAll({
-            where: {
-                sender_id: req.user.userId,
-                receiver_id:  user_id
-            },
-            order: [['created_at', 'ASC']]  // Order messages by creation date
-        });
-
-        res.status(200).json({ data: messages });
-
-
-    } catch (error) {
-        res.status(500).json({ message: 'Failed to retrieve messages.', error });
-    }
-};
 
 
 module.exports = { sendMessage,getMessages,sendGroupMessage ,getGroupMessages};

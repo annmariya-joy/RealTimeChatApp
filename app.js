@@ -41,7 +41,7 @@ app.use('/api/messages', require('./routes/messageRoutes')(io));
 app.use('/api/groups', require('./routes/groupRoutes'));
 
 
-const port = 9000;
+const port = 9090;
 const localIpAddress = getLocalIpAddress();
 
 if (process.env.NODE_ENV !== 'test') {
