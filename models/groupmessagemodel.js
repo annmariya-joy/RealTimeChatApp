@@ -1,4 +1,4 @@
-// models/GroupMessage.js
+
 module.exports = (sequelize, DataTypes) => {
     const GroupMessage = sequelize.define("GroupMessage", {
         group_message_id: {

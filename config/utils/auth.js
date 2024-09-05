@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const UserToken = require('../../models/usertokenmodel');
 const db = require('../../models');
 
 
@@ -24,10 +23,10 @@ const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
     expiresIn: '80d',
 });
 
-// Remove old tokens if they exist
+
 await db.userToken.destroy({ where: { user_id: user.user_id } });
 
-// Save new refresh token
+
 await db.userToken.create({ user_id: user.user_id, token: refreshToken });
 
 
@@ -45,7 +44,7 @@ if (!token) {
 
 jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
     if (err) {
-     return res.status(401).json({ message: 'Invalid access token.' });  ///chang 403 to 401 when invliad token happen
+     return res.status(401).json({ message: 'Invalid access token.' });  
     }
 
     req.user = decoded;
@@ -70,7 +69,7 @@ const verifyRefreshToken = (req, res) => {
             return res.status(401).json({ message: 'Invalid refresh token' });
         }
 
-        // Generate new tokens
+      
         const payload = {
             userId: user.userId,
             name: user.user_name,

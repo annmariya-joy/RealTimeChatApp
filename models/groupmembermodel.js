@@ -1,4 +1,4 @@
-// models/GroupMember.js
+
 module.exports = (sequelize, DataTypes) => {
     const GroupMember = sequelize.define("GroupMember", {
         group_member_id: {

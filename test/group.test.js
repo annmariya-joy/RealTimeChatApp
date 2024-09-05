@@ -162,12 +162,9 @@ describe('Remove Member', () => {
         expect(res.status).toHaveBeenCalledWith(404);
         expect(res.json).toHaveBeenCalledWith({ message: 'Group not found.' });
     });
-
     test('should handle errors during member removal', async () => {
         db.group_members.destroy.mockRejectedValueOnce(new Error('Failed to remove member'));
-
         await removeMember(req, res);
-
         expect(res.status).toHaveBeenCalledWith(500);
         expect(res.json).toHaveBeenCalledWith({ message: 'Failed to remove member.', error: expect.any(Error) });
     });

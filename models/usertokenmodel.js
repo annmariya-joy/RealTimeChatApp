@@ -1,7 +1,6 @@
 
 
 module.exports =(sequelize, DataTypes) => {
-
     const UserToken = sequelize.define("UserToken",{
         usertoken_id:{
             type: DataTypes.INTEGER,
@@ -22,7 +21,6 @@ module.exports =(sequelize, DataTypes) => {
             allowNull: true
         },
         
-    
     }, {
         paranoid: true,
         tableName: 'userToken',

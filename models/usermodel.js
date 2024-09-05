@@ -1,8 +1,6 @@
 const constant = require("../config/utils/constant");
 
-
 module.exports =(sequelize, DataTypes) => {
-
     const User = sequelize.define("User",{
         user_id:{
             type: DataTypes.INTEGER,
@@ -25,8 +23,7 @@ module.exports =(sequelize, DataTypes) => {
             validate: {
             isEmail: true,
             }
-        },
-   
+        }, 
         password: {
             type: DataTypes.STRING ,
             allowNull: false

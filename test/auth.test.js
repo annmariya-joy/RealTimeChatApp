@@ -1,11 +1,11 @@
 const request = require('supertest');
-const app = require('../app'); // Import the Express app
+const app = require('../app'); 
 const db = require('../models');
 const bcrypt = require('bcrypt');
 const { generateAccessToken } = require('../config/utils/auth');
 const mockdate = require('mockdate');
 
-// Mock the functions
+
 jest.mock('bcrypt');
 jest.mock('../config/utils/auth');
 jest.mock('../models', () => ({
@@ -18,11 +18,11 @@ jest.mock('../models', () => ({
 
 describe('Auth Controller', () => {
   beforeAll(() => {
-    mockdate.set('2024-09-04'); // Set a fixed date for consistency
+    mockdate.set('2024-09-04'); 
   });
 
   afterAll(() => {
-    mockdate.reset(); // Reset the date mock
+    mockdate.reset(); 
   });
 
   describe('POST /api/users/login', () => {
@@ -65,7 +65,7 @@ describe('Auth Controller', () => {
 
   describe('POST /api/users/signup', () => {
     it('should sign up a new user', async () => {
-      db.users.count.mockResolvedValue(0); // No existing user
+      db.users.count.mockResolvedValue(0); 
       bcrypt.hash.mockResolvedValue('hashedpassword');
       db.users.create.mockResolvedValue({
         role: 'user',
@@ -94,7 +94,7 @@ describe('Auth Controller', () => {
     });
 
     it('should return 400 for existing email', async () => {
-      db.users.count.mockResolvedValue(1); // Existing user
+      db.users.count.mockResolvedValue(1); 
 
       const response = await request(app)
         .post('/api/users/signup')

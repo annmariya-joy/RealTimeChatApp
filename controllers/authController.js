@@ -1,7 +1,7 @@
 const db = require("../models");
 const bcrypt = require('bcrypt');
-const { validateEmail,isValidPhoneNumber } = require('./validater');
-const { generateAccessToken,verifyIdToken } = require('../config/utils/auth');
+const { validateEmail } = require('./validater');
+const { generateAccessToken } = require('../config/utils/auth');
 const { Buffer } = require('buffer');
 const request = require('request');
 const jwt = require('jsonwebtoken');
@@ -22,18 +22,13 @@ const login = async (req, res) => {
     if (!encodedCredentials) {
       throw new Error('Encoded credentials are missing.');
     }
-
- 
     const decodedCredentials = Buffer.from(encodedCredentials, 'base64').toString('utf-8');
    
-
     const [userEmail, password] = decodedCredentials.split(':');
     if (!userEmail || !password) {
       throw new Error('Invalid credentials format.');
     }
 
-
-    // Validate email and password
     if (!validateEmail(userEmail)) {
       return res.status(400).json({ message: 'Invalid email format.' });
     }

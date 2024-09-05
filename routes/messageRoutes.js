@@ -8,7 +8,6 @@ module.exports = (io) => {
     router.post('/sendMessage', authenticateAccessToken, sendMessage(io));  
     router.get('/received/:user_id', authenticateAccessToken, getMessages);
     router.post('/sendGroupMessage', authenticateAccessToken, sendGroupMessage(io)); 
-
     router.get('/:group_id/messages', authenticateAccessToken, getGroupMessages);
     return router;
 };

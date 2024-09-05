@@ -1,4 +1,4 @@
-// models/Group.js
+
 module.exports = (sequelize, DataTypes) => {
     const Group = sequelize.define("Group", {
         group_id: {
