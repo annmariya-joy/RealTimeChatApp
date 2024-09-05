@@ -1,3 +1,5 @@
+
+
 require('dotenv').config();
 
 const express = require('express');
@@ -39,6 +41,11 @@ app.use('/api/messages', require('./routes/messageRoutes')(io));
 app.use('/api/groups', require('./routes/groupRoutes'));
 
 
+
+app.get('/', (req, res) => {
+  res.status(200).send("Global interceptor response")
+})
+
 const port = 9000;
 const localIpAddress = getLocalIpAddress();
 
@@ -46,7 +53,7 @@ if (process.env.NODE_ENV !== 'test') {
   sequelize
     .sync()
     .then(() => {
-      app.listen(port, localIpAddress, () => {
+      server.listen(port, localIpAddress, () => {
         console.log(`Server running at http://${localIpAddress}:${port}`);
       });
     })
