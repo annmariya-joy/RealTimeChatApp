@@ -26,6 +26,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         }
+        
     }, {
         paranoid: true,
         tableName: 'group_messages',

@@ -1,60 +1,55 @@
 const jwt = require('jsonwebtoken');
 const db = require('../../models');
 
-
-
 async function generateAccessToken(user) {
 
-const payload = {
-    userId: user.user_id,
-    name: user.user_name,
-    email: user.email,
-    role: user.role
-};
-console.log(payload)
-const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
-expiresIn: '30d',
-});
-const RefreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
-expiresIn: '80d',
-});
+    const payload = {
+        userId: user.user_id,
+        name: user.user_name,
+        email: user.email,
+        role: user.role
+    };
+    console.log(payload)
+    const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: '30d',
+    });
+    const RefreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
+        expiresIn: '80d',
+    });
 
-const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
-    expiresIn: '80d',
-});
-
-
-await db.userToken.destroy({ where: { user_id: user.user_id } });
+    const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
+        expiresIn: '80d',
+    });
 
 
-await db.userToken.create({ user_id: user.user_id, token: refreshToken });
+    await db.userToken.destroy({ where: { user_id: user.user_id } });
 
 
-return { accessToken:accessToken, RefreshToken:RefreshToken};
+    await db.userToken.create({ user_id: user.user_id, token: refreshToken });
+
+
+    return { accessToken: accessToken, RefreshToken: RefreshToken };
 }
 
 function authenticateAccessToken(req, res, next) {
-const authHeader = req.headers.authorization;
-const token = authHeader && authHeader.split(' ')[1];
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.split(' ')[1];
 
 
-if (!token) {
-    return res.status(400).json({ message: 'Access token is missing.' });
-}
-
-jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
-    if (err) {
-     return res.status(401).json({ message: 'Invalid access token.' });  
+    if (!token) {
+        return res.status(400).json({ message: 'Access token is missing.' });
     }
 
-    req.user = decoded;
-    console.log(req.user);
-    next();
-});
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+        if (err) {
+            return res.status(401).json({ message: 'Invalid access token.' });
+        }
+
+        req.user = decoded;
+        console.log(req.user);
+        next();
+    });
 }
-
-
-
 
 
 const verifyRefreshToken = (req, res) => {
@@ -69,7 +64,6 @@ const verifyRefreshToken = (req, res) => {
             return res.status(401).json({ message: 'Invalid refresh token' });
         }
 
-      
         const payload = {
             userId: user.userId,
             name: user.user_name,
@@ -95,5 +89,5 @@ const verifyRefreshToken = (req, res) => {
 
 
 
-  
-module.exports = { generateAccessToken, authenticateAccessToken ,verifyRefreshToken };
+
+module.exports = { generateAccessToken, authenticateAccessToken, verifyRefreshToken };

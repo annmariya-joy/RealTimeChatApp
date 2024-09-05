@@ -18,19 +18,16 @@ app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
 
-
-
 io.on('connection', (socket) => {
   console.log('New client connected');
 
-
   socket.on('joinRoom', (room) => {
-      socket.join(room);
-      console.log(`User joined room: ${room}`);
+    socket.join(room);
+    console.log(`User joined room: ${room}`);
   });
 
   socket.on('disconnect', () => {
-      console.log('Client disconnected');
+    console.log('Client disconnected');
   });
 });
 
@@ -41,7 +38,7 @@ app.use('/api/messages', require('./routes/messageRoutes')(io));
 app.use('/api/groups', require('./routes/groupRoutes'));
 
 
-const port = 9090;
+const port = 9000;
 const localIpAddress = getLocalIpAddress();
 
 if (process.env.NODE_ENV !== 'test') {
@@ -67,7 +64,7 @@ function getLocalIpAddress() {
       }
     }
   }
-  return 'localhost'; 
+  return 'localhost';
 }
 
 module.exports = app; 
