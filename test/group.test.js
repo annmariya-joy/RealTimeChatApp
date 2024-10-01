@@ -90,6 +90,8 @@ describe('Group Controller', () => {
         db.group_members.bulkCreate.mockResolvedValue([]);
     });
 
+    
+
     afterEach(() => {
         jest.clearAllMocks();
     });
